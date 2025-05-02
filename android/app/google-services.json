@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "366170758043",
+    "project_id": "rightshub-a5a4b",
+    "storage_bucket": "rightshub-a5a4b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:366170758043:android:212c57c55fdedd5f011f3e",
+        "android_client_info": {
+          "package_name": "com.example.rights_hub"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADuu2hC0_-4nZxVl_enMURxaVygp1kfbU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

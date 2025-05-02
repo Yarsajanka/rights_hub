@@ -1,0 +1,2 @@
+C:/Users/PC/rights_hub/android/app/.cxx/Debug/xn5s274u/x86_64/CMakeFiles/edit_cache.dir
+C:/Users/PC/rights_hub/android/app/.cxx/Debug/xn5s274u/x86_64/CMakeFiles/rebuild_cache.dir
