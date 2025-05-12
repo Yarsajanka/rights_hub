@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 enum VerificationMethod { email, phone }
 
@@ -43,6 +44,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
         );
+
+        // Update displayName with the name from the form
+        await userCredential.user?.updateDisplayName(_nameController.text.trim());
+        await userCredential.user?.reload();
+        await _auth.currentUser?.reload();
+
+        // Save username in Firestore
+        if (userCredential.user != null) {
+          await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).set({
+            'username': _usernameController.text.trim(),
+            'name': _nameController.text.trim(),
+            'email': _emailController.text.trim(),
+          });
+        }
+
         await userCredential.user?.sendEmailVerification();
 
         showDialog(
@@ -299,7 +315,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             onPressed: _signUp,
                             child: Text('Sign Up'),
                           ),
-                        ),
+                        )
                 ],
               ),
             ),

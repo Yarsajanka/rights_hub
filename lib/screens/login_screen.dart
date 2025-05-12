@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'sign_up_screen.dart';
 import 'admin_dashboard.dart';
 
@@ -22,16 +23,29 @@ class _LoginScreenState extends State<LoginScreen> {
       _errorMessage = null;
     });
     try {
-      // Using email as username for Firebase Auth
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: _usernameController.text.trim(),
         password: _passwordController.text.trim(),
       );
-      // Navigate to admin dashboard on successful login as placeholder
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => AdminDashboard()),
-      );
+
+      String email = _usernameController.text.trim();
+
+      // Check if user is super admin from Firestore
+      final superAdminSnapshot = await FirebaseFirestore.instance
+          .collection('superadmins')
+          .where('email', isEqualTo: email)
+          .get();
+
+      if (superAdminSnapshot.docs.isNotEmpty) {
+        // Navigate to admin dashboard on successful super admin login
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => AdminDashboard()),
+        );
+      } else {
+        // Regular user login: navigate back to main home page
+        Navigator.pushReplacementNamed(context, '/');
+      }
     } on FirebaseAuthException catch (e) {
       setState(() {
         _errorMessage = e.message;

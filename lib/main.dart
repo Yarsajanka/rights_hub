@@ -1,15 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';  // Added import for FirebaseAuth
+// Added Firestore import
 import 'screens/human_rights_reporting_screen.dart'; // Importing the reporting screen
 // Importing the Admin Dashboard
 import 'screens/legal_aid_finder_screen.dart'; // Importing the Legal Aid Finder Screen
 import 'screens/chat_screen.dart'; // Importing the Chat Screen
 import 'screens/login_screen.dart'; // Importing the Login Screen
+import 'screens/profile_screen.dart'; // Importing the Profile Screen
+
+import 'package:flutter/foundation.dart' show kIsWeb;
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   print('Starting Firebase initialization...');
-  await Firebase.initializeApp();
+  if (kIsWeb) {
+    await Firebase.initializeApp(
+      options: FirebaseOptions(
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_AUTH_DOMAIN",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_STORAGE_BUCKET",
+        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+        appId: "YOUR_APP_ID",
+        measurementId: "YOUR_MEASUREMENT_ID",
+      ),
+    );
+  } else {
+    await Firebase.initializeApp();
+  }
   print('Firebase initialization completed.');
   runApp(MyApp());
 }
@@ -35,7 +55,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0; // Track the selected index for bottom navigation
 
-  void _onItemTapped(int index) {
+      void _onItemTapped(int index) {
     if (index == 1) {
       // Navigate to reporting screen
       Navigator.push(
@@ -49,17 +69,25 @@ class _MyHomePageState extends State<MyHomePage> {
         MaterialPageRoute(builder: (context) => LegalAidFinderScreen()),
       );
     } else if (index == 3) {
-      // Navigate to login screen
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => LoginScreen()),
-      );
-    } else if (index == 4) {
       // Navigate to chat screen
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => ChatScreen()),
       );
+    } else if (index == 4) {
+      // Navigate to profile screen or login if not logged in
+      var user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => LoginScreen()),
+        );
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ProfileScreen()),
+        );
+      }
     }
     setState(() {
       _selectedIndex = index; // Update the selected index
@@ -68,7 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // Sample posts data
   final List<Map<String, String>> posts = List.generate(5, (index) => {
-        'image': 'assets/sample_image_${index + 1}.png', // Placeholder image path
+        'image': 'assets/sharp_logo.png', // Use existing sharp_logo.png instead of missing images
         'description': 'This is post number ${index + 1}. Sharing important information about human rights.',
       });
 
@@ -208,12 +236,12 @@ class _MyHomePageState extends State<MyHomePage> {
             label: 'Legal Aid',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person, color: Colors.grey),
-            label: 'Profile',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.chat, color: Colors.grey),
             label: 'Chat',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person, color: Colors.grey),
+            label: 'Profile',
           ),
         ],
         currentIndex: _selectedIndex,
