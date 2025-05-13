@@ -10,6 +10,11 @@ app.use(express.json());
 
 // No routes as backend is only used for media upload now
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok' });
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
